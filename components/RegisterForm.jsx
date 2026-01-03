@@ -1,6 +1,51 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+// import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 const RegisterForm = () => {
+  const [users, setUsers] = useState([]);
+  const [input, setInput] = useState({
+    name: "",
+    number: "",
+    email: "",
+    password: "",
+    companyName: "",
+    agency: "",
+  });
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const data = localStorage.getItem("createUser");
+    if (data) {
+      setUsers(JSON.parse(data));
+    }
+  }, []);
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setInput((prev) => ({ ...prev, [name]: value }));
+  };
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (input.email === "" || input.password === "") {
+      setError("enter email or password");
+      return false;
+    }
+    const newUser = { ...input };
+    const updateData = [...users, newUser];
+
+    localStorage.setItem("createUser", JSON.stringify(updateData));
+    setUsers(updateData);
+    setInput({
+      name: "",
+      number: "",
+      email: "",
+      password: "",
+      companyName: "",
+      agency:""
+    });
+    setError("");
+    navigate("/account");
+  };
   return (
     <div>
       <div className="w-full h-screen flex justify-center items-center">
@@ -9,7 +54,7 @@ const RegisterForm = () => {
             Create your <br />
             PopX account
           </h1>
-          <form action="">
+          <form action="" onSubmit={handleSubmit}>
             <div className="relative">
               <label
                 htmlFor=""
@@ -18,7 +63,10 @@ const RegisterForm = () => {
                 Full Name<span className="text-red-600">*</span>
               </label>
               <input
-                type="email"
+                onChange={handleChange}
+                value={input.name}
+                name="name"
+                type="text"
                 placeholder="Marry Deo"
                 className="w-80 h-10 border-2 border-gray-300 rounded-md px-3 placeholder:text-[#1D2226] outline-purple-700"
               />
@@ -31,7 +79,10 @@ const RegisterForm = () => {
                 Phone number<span className="text-red-600">*</span>
               </label>
               <input
-                type="email"
+                name="number"
+                onChange={handleChange}
+                value={input.number}
+                type="tel"
                 placeholder="Marry Deo"
                 className="w-80 h-10 border-2 border-gray-300 rounded-md px-3 placeholder:text-[#1D2226] outline-purple-700"
               />
@@ -44,6 +95,9 @@ const RegisterForm = () => {
                 Email address<span className="text-red-600">*</span>
               </label>
               <input
+                name="email"
+                onChange={handleChange}
+                value={input.email}
                 type="email"
                 placeholder="Marry Deo"
                 className="w-80 h-10 border-2 border-gray-300 rounded-md px-3 placeholder:text-[#1D2226] outline-purple-700"
@@ -57,7 +111,10 @@ const RegisterForm = () => {
                 Password<span className="text-red-600">*</span>
               </label>
               <input
-                type="email"
+                name="password"
+                onChange={handleChange}
+                value={input.password}
+                type="password"
                 placeholder="Marry Deo"
                 className="w-80 h-10 border-2 border-gray-300 rounded-md px-3 placeholder:text-[#1D2226] outline-purple-700"
               />
@@ -70,7 +127,10 @@ const RegisterForm = () => {
                 Company name
               </label>
               <input
-                type="email"
+                name="companyName"
+                onChange={handleChange}
+                value={input.companyName}
+                type="text"
                 placeholder="Marry Deo"
                 className="w-80 h-10 border-2 border-gray-300 rounded-md px-3 placeholder:text-[#1D2226] outline-purple-700"
               />
@@ -89,6 +149,8 @@ const RegisterForm = () => {
                   name="agency"
                   id=""
                   value="Yes"
+                  onChange={handleChange}
+                  checked={input.agency === "Yes"}
                   className="scale-150 accent-[#642AF5] mr-3 cursor-pointer"
                 />
                 <label
@@ -102,6 +164,8 @@ const RegisterForm = () => {
                   name="agency"
                   id=""
                   value="No"
+                  onChange={handleChange}
+                  checked={input.agency === "No"}
                   className="scale-150 accent-[#642AF5] mr-3 ml-5 cursor-pointer"
                 />
                 <label
@@ -112,11 +176,12 @@ const RegisterForm = () => {
                 </label>
               </div>
             </div>
-            <Link to={"/account"}>
-              <button className="w-full h-11 bg-[#6C25FF] mt-30 text-white flex justify-center items-center font-medium text-[16px] cursor-pointer rounded-md">
-                Create Account
-              </button>
-            </Link>
+            <button
+              type="submit"
+              className="w-full h-11 bg-[#6C25FF] mt-30 text-white flex justify-center items-center font-medium text-[16px] cursor-pointer rounded-md"
+            >
+              Create Account
+            </button>
           </form>
         </div>
       </div>

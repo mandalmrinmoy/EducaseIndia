@@ -1,6 +1,35 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 const LoginForm = () => {
+  const [input, setInput] = useState({
+    email: "",
+    password: "",
+  });
+  const [error, setError] = useState("");
+  const navigate=useNavigate()
+  const handleChnage = (e) => {
+    const { name, value } = e.target;
+    setInput((prev) => ({ ...prev, [name]: value }));
+  };
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    const data = localStorage.getItem("createUser");
+    const saveData = JSON.parse(data);
+
+    if (!saveData) {
+      setError("no data found");
+    }
+
+    const matchData = saveData.find(
+      (user) => user.email === input.email && user.password === input.password
+    );
+    if (matchData) {
+      navigate("/account");
+    }else {
+      setError("Invalid email or password");
+    }
+  };
   return (
     <div className="w-full h-screen flex justify-center items-center">
       <div className="w-[375px]  h-screen flex flex-col justify-start items-start bg-[#F7F8F9] px-5  py-10 gap-2">
@@ -12,7 +41,7 @@ const LoginForm = () => {
           <br />
           consectetur adipisicing elit.
         </p>
-        <form action="">
+        <form action="" onSubmit={handleSubmit}>
           <div className="relative">
             <label
               htmlFor=""
@@ -22,6 +51,9 @@ const LoginForm = () => {
             </label>
             <input
               type="email"
+              name="email"
+              value={input.email}
+              onChange={handleChnage}
               placeholder="Enter email address"
               className="w-80 h-10 border border-[#CBCBCB] rounded-md px-3 font-semibold text-gray-800 outline-purple-700"
             />
@@ -34,16 +66,17 @@ const LoginForm = () => {
               Password
             </label>
             <input
-              type="email"
+              type="password"
+              name="password"
+              value={input.password}
+              onChange={handleChnage}
               placeholder="Enter password"
               className="w-80 h-10 border border-[#CBCBCB] rounded-md px-3 font-semibold text-gray-800 outline-purple-700"
             />
           </div>
-          <Link to={"/account"}>
             <button className="w-full h-11.5 bg-[#CBCBCB] mt-7 text-white flex justify-center items-center font-medium text-lg cursor-pointer rounded-md">
               Login
             </button>
-          </Link>{" "}
         </form>
       </div>
     </div>
